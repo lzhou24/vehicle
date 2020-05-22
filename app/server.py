@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://www.dropbox.com/s/6bgq8t6yextloqp/export.pkl?raw=1'
+export_file_url = 'https://drive.google.com/uc?export=download&id=1wS7oQdscmmLSXHJlf4vnMlzpg848SMMc'
 export_file_name = 'export.pkl'
 
 classes = ['black', 'grizzly', 'teddys']
@@ -52,7 +52,7 @@ loop.close()
 @app.route('/')
 async def homepage(request):
     html_file = path / 'view' / 'index.html'
-    return HTMLResponse(html_file.open().read())
+    return HTMLResponse(html_file.open(encoding = 'utf-8').read())
 
 
 @app.route('/analyze', methods=['POST'])
@@ -60,8 +60,8 @@ async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
-    return JSONResponse({'result': str(prediction)})
+    pred_class, pred_index, pred_outputs = learn.predict(img)
+    return JSONResponse({'result': str(pred_class)})
 
 
 if __name__ == '__main__':
